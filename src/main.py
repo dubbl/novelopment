@@ -1,5 +1,7 @@
 import argparse
+import random
 
+import pycorpora
 from pydantic import BaseModel
 from pydriller.repository import Repository
 
@@ -36,7 +38,10 @@ class Novel(BaseModel):
 def main():
     args = parser.parse_args()
     repo = load_repo(args.repository)
-    novel = Novel(title=f'The story of {get_repo_name(args.repository)}')
+    title_adj = random.choice(pycorpora.words.adjs['adjs'])
+    novel = Novel(
+        title=f'The {title_adj} story of {get_repo_name(args.repository)}',
+    )
 
     chapter_all = novel.new_chapter(title='All commits')
     for commit in repo.traverse_commits():
