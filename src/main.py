@@ -38,6 +38,10 @@ class Novel(BaseModel):
 def main():
     args = parser.parse_args()
     repo = load_repo(args.repository)
+    seed = args.seed
+    if not seed:
+        seed = list(repo.traverse_commits())[-1].hash
+    random.seed(int(seed, 16))
     title_adj = random.choice(pycorpora.words.adjs['adjs'])
     novel = Novel(
         title=f'The {title_adj} story of {get_repo_name(args.repository)}',
@@ -72,6 +76,17 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     'repository',
     help='Filepath or URL of the git repository',
+)
+parser.add_argument(
+    '-s',
+    '--seed',
+    action='store',
+    dest='seed',
+    help=(
+        'Hexadecimal seed of the pseudorandom number generator. '
+        'Defaults to the hash of the latest commit.'
+    ),
+    required=False,
 )
 
 
