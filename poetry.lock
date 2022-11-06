@@ -65,6 +65,21 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "pydantic"
+version = "1.10.2"
+description = "Data validation and settings management using python type hints"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+typing-extensions = ">=4.1.0"
+
+[package.extras]
+dotenv = ["python-dotenv (>=0.10.4)"]
+email = ["email-validator (>=1.0.3)"]
+
+[[package]]
 name = "pydriller"
 version = "2.1"
 description = "Framework for MSR"
@@ -144,7 +159,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7, <4"
-content-hash = "73e5fdd98cfa91ec1e204b623316bfc8062b9098a10219981532e6c7b61fdf33"
+content-hash = "3280ab99b3842b9d707721b973eb6cd9d98f3431169b36b966a179b135656ff8"
 
 [metadata.files]
 certifi = []
@@ -154,6 +169,7 @@ gitpython = []
 idna = []
 lizard = []
 pycorpora = []
+pydantic = []
 pydriller = []
 pytz = []
 requests = []
