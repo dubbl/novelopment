@@ -1,59 +1,45 @@
 import argparse
+import logging
 from pathlib import Path
 import random
 
 import pycorpora
-from pydantic import BaseModel
 from pydriller.repository import Repository
 
+from miner import extract_data
+from novel import Novel
 
-class Chapter(BaseModel):
-    title: str = ""
-    paragraphs: list[str] = []
-
-    def print(self) -> None:
-        print(self.title)
-        for paragraph in self.paragraphs:
-            print(paragraph)
-
-
-class Novel(BaseModel):
-    title: str = ""
-    author: str = "Novelopment 0.1"
-    synopsis: str = ""
-    chapters: list[Chapter] = []
-
-    def new_chapter(self, **kwargs) -> Chapter:
-        chapter = Chapter(**kwargs)
-        self.chapters.append(chapter)
-        return chapter
-
-    def print(self) -> None:
-        print(self.title)
-        print(f"By {self.author}\n")
-        print(self.synopsis)
-        for chapter in self.chapters:
-            chapter.print()
+logging.basicConfig()
+log = logging.getLogger(__name__)
 
 
 def main():
     args = parser.parse_args()
+    if args.verbose:
+        log.setLevel(logging.DEBUG)
+    log.info("Loading repository %s", args.repository)
     repo = load_repo(args.repository)
+    repo_name = get_repo_name(args.repository)
     seed = args.seed
     if not seed:
         seed = list(repo.traverse_commits())[-1].hash
     random.seed(int(seed, 16))
-    title_adj = random.choice(pycorpora.words.adjs["adjs"])
-    novel = Novel(
-        title=f"The {title_adj} story of {get_repo_name(args.repository)}",
+    title_adv = random.choice(pycorpora.words.adverbs["adverbs"])
+    title_adj = random.choice(
+        pycorpora.words.encouraging_words["encouraging_words"],
     )
+    novel = Novel(
+        title=f"The {title_adv} {title_adj} story of {repo_name}",
+    )
+    log.info("Extracting data from repository")
+    actors, events = extract_data(repo)
 
-    chapter_all = novel.new_chapter(title="All commits")
-    for commit in repo.traverse_commits():
-        first_line_commit_msg = commit.msg.split("\n")[0]
-        chapter_all.paragraphs.append(
-            f"{commit.author.name} be like {first_line_commit_msg}",
-        )
+    intro = novel.new_chapter(title="Introduction")
+    intro.paragraphs.append(
+        "While you may have been enticed to grab this book because of its title"
+        f' "{novel.title}", this is actually the story of {len(actors)}'
+        f" people who came together to build {repo_name}.",
+    )
 
     novel.print()
 
@@ -87,6 +73,12 @@ parser.add_argument(
         "Defaults to the hash of the latest commit."
     ),
     required=False,
+)
+parser.add_argument(
+    "--verbose",
+    dest="verbose",
+    help="increase output verbosity",
+    action="store_true",
 )
 
 
