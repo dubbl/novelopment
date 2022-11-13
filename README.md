@@ -9,7 +9,7 @@ Replace the URL with any other URL of a git repository or point it to a local
 repository.
 
 ```
-usage: novelopment [-h] [-s SEED] repository
+usage: novelopment [-h] [-b BRANCH] [-s SEED] [--verbose] repository
 
 Generate the story of a git repository.
 
@@ -18,7 +18,10 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  -b BRANCH, --branch BRANCH
+                        The branch that should story should be based on (default: master)
   -s SEED, --seed SEED  Hexadecimal seed of the pseudorandom number generator. Defaults to the hash of the latest commit.
+  --verbose             increase output verbosity
 
 Commit for adventure!
 ```

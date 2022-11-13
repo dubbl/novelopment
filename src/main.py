@@ -88,7 +88,7 @@ parser.add_argument(
     "-b",
     "--branch",
     default="master",
-    help="The branch that should story should be based on",
+    help="The branch that should story should be based on (default: master)",
     required=False,
 )
 parser.add_argument(
