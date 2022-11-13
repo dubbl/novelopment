@@ -41,7 +41,7 @@ def main():
 
     intro = novel.new_chapter(title="Introduction")
 
-    actor_word = random.choice(['person', 'human', 'developer', 'contributor'])
+    actor_word = random.choice(["person", "human", "developer", "contributor"])
     actor_word = lexicon.getWord(actor_word, nlg.LexicalCategory.NOUN)
     if len(actors) > 1:
         actor_word.setPlural(True)
