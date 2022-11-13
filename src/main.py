@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 import random
 
 import pycorpora
@@ -57,11 +58,10 @@ def main():
     novel.print()
 
 
-def get_repo_name(path):
-    if path.endswith('.git'):
-        return path.split('/')[-1][:-4]
-    # TODO: handle local repos
-    return ''
+def get_repo_name(repository_location):
+    if repository_location.endswith('.git'):
+        return repository_location.split('/')[-1][:-4]
+    return Path(repository_location).absolute().stem
 
 
 def load_repo(filepath):
