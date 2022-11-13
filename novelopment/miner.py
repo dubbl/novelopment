@@ -7,7 +7,7 @@ from typing import Any
 from pydantic import BaseModel
 from pydriller.repository import Commit, Repository
 
-log = logging.getLogger(__name__)
+log = logging.getLogger("novelopment.miner")
 
 
 class CommitSize(IntEnum):
@@ -95,7 +95,8 @@ def extract_data(repo: Repository):
     events = []
     actors = {}
     for i, commit in enumerate(repo.traverse_commits()):
-        if i % 10 == 0:
-            log.info("Analyzed {i} commits", i)
+        log.debug("Analyzing commit %s", commit.hash)
+        if i % 50 == 0:
+            log.info("Analyzed %d commits", i)
         events.append(NovelCommit.from_commit(commit, actors))
     return actors, events

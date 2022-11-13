@@ -11,8 +11,8 @@ from content_determiner import determine_content
 from miner import extract_data
 from novel import Novel
 
+log = logging.getLogger("novelopment")
 logging.basicConfig()
-log = logging.getLogger(__name__)
 
 lexicon = nlg.lexicon.Lexicon.getDefaultLexicon()
 nlg_factory = nlg.NLGFactory(lexicon)
@@ -22,6 +22,8 @@ realiser = nlg.realiser.Realiser(lexicon)
 def main():
     args = parser.parse_args()
     if args.verbose:
+        log.setLevel(logging.INFO)
+    if args.verbose > 1:
         log.setLevel(logging.DEBUG)
     log.info("Loading repository %s", args.repository)
     repo = load_repo(args.repository, args.branch)
@@ -102,12 +104,7 @@ parser.add_argument(
     ),
     required=False,
 )
-parser.add_argument(
-    "--verbose",
-    dest="verbose",
-    help="increase output verbosity",
-    action="store_true",
-)
+parser.add_argument("--verbose", "-v", action="count", default=0)
 
 
 if __name__ == "__main__":
