@@ -7,6 +7,7 @@ import pycorpora
 from pydriller.repository import Repository
 import simplenlg as nlg
 
+from content_determiner import determine_content
 from miner import extract_data
 from novel import Novel
 
@@ -23,7 +24,7 @@ def main():
     if args.verbose:
         log.setLevel(logging.DEBUG)
     log.info("Loading repository %s", args.repository)
-    repo = load_repo(args.repository)
+    repo = load_repo(args.repository, args.branch)
     repo_name = get_repo_name(args.repository)
     seed = args.seed
     if not seed:
@@ -38,6 +39,14 @@ def main():
     )
     log.info("Extracting data from repository")
     actors, events = extract_data(repo)
+
+    content = determine_content(actors, events)
+    for key in content:
+        print(f"{key}:")
+        for k, v in content[key].items():
+            print(f"\t{k}: {v}")
+
+    # handle empty repos?
 
     intro = novel.new_chapter(title="Introduction")
 
@@ -62,8 +71,8 @@ def get_repo_name(repository_location):
     return Path(repository_location).absolute().stem
 
 
-def load_repo(filepath):
-    return Repository(filepath)
+def load_repo(filepath, branch):
+    return Repository(filepath, only_in_branch=branch)
 
 
 parser = argparse.ArgumentParser(
@@ -74,6 +83,13 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "repository",
     help="Filepath or URL of the git repository",
+)
+parser.add_argument(
+    "-b",
+    "--branch",
+    default="master",
+    help="The branch that should story should be based on",
+    required=False,
 )
 parser.add_argument(
     "-s",

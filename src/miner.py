@@ -19,13 +19,14 @@ class CommitSize(IntEnum):
 
     @classmethod
     def get_size_of_commit(cls, commit: Commit):
-        if commit.lines > 1000:
+        lines = commit.lines
+        if lines > 1000:
             return cls.GIGANTIC
-        if commit.lines > 500:
+        if lines > 500:
             return cls.BIG
-        if commit.lines > 150:
+        if lines > 150:
             return cls.MEDIUM
-        if commit.lines > 30:
+        if lines > 30:
             return cls.SMALL
         return cls.TINY
 
@@ -33,51 +34,60 @@ class CommitSize(IntEnum):
 class Actor(BaseModel):
     email: str
     name: str
-    authored_commits: list["NovelCommit"] = []
-    committed_commits: list["NovelCommit"] = []
+    authored_commits: int = 0
+    authored_fix_commits: int = 0
+    committed_commits: int = 0
+
+    def __repr__(self) -> str:
+        return f"{self.name} <{self.email}>"
+
+    def __str__(self) -> str:
+        return f"{self.name} <{self.email}>"
 
 
 class NovelCommit(BaseModel):
     hash: str
-    author: Any
+    author: Actor
+    committer: Actor
     msg: str
-    author_date: date
-    author_datetime: datetime
+    authored_date: date
+    authored_datetime: datetime
+    committed_date: date
+    committed_datetime: datetime
     size: CommitSize
     is_fix: bool
 
     @classmethod
     def from_commit(cls, commit: "Commit", actors: dict[str, Actor]):
         fix_pattern = r"\bfix\b"
-        if commit.author.email not in actors:
-            actors[commit.author.email] = Actor(
-                email=commit.author.email,
+        committer_email = commit.committer.email
+        author_email = commit.author.email
+        if author_email not in actors:
+            actors[author_email] = Actor(
+                email=author_email,
                 name=commit.author.name,
             )
-        if commit.committer.email not in actors:
-            actors[commit.committer.email] = Actor(
-                email=commit.committer.email,
+        if committer_email not in actors:
+            actors[committer_email] = Actor(
+                email=committer_email,
                 name=commit.committer.name,
-            )
-        if commit.author.email not in actors:
-            actors[commit.author.email] = Actor(
-                email=commit.author.email,
-                name=commit.author.name,
             )
         novel_commit = cls(
             hash=commit.hash,
-            author=Actor(
-                email=commit.author.email,
-                name=commit.author.name,
-            ),
+            author=actors[author_email],
+            committer=actors[committer_email],
             msg=commit.msg,
-            author_date=commit.author_date.date(),
-            author_datetime=commit.author_date,
+            authored_date=commit.author_date.date(),
+            authored_datetime=commit.author_date,
+            committed_date=commit.committer_date.date(),
+            committed_datetime=commit.committer_date,
             size=CommitSize.get_size_of_commit(commit),
             is_fix=bool(re.search(fix_pattern, commit.msg, re.IGNORECASE)),
         )
-        actors[commit.author.email].authored_commits.append(novel_commit)
-        actors[commit.committer.email].committed_commits.append(novel_commit)
+        actors[author_email].authored_commits += 1
+        actors[committer_email].committed_commits += 1
+        if novel_commit.is_fix:
+            actors[author_email].authored_fix_commits += 1
         return novel_commit
 
 
@@ -85,6 +95,7 @@ def extract_data(repo: Repository):
     events = []
     actors = {}
     for i, commit in enumerate(repo.traverse_commits()):
-        log.info("Analyzed commit %d", i)
+        if i % 10 == 0:
+            log.info("Analyzed {i} commits", i)
         events.append(NovelCommit.from_commit(commit, actors))
     return actors, events
