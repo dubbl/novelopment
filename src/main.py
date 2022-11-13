@@ -5,12 +5,17 @@ import random
 
 import pycorpora
 from pydriller.repository import Repository
+import simplenlg as nlg
 
 from miner import extract_data
 from novel import Novel
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
+
+lexicon = nlg.lexicon.Lexicon.getDefaultLexicon()
+nlg_factory = nlg.NLGFactory(lexicon)
+realiser = nlg.realiser.Realiser(lexicon)
 
 
 def main():
@@ -35,10 +40,17 @@ def main():
     actors, events = extract_data(repo)
 
     intro = novel.new_chapter(title="Introduction")
+
+    actor_word = random.choice(['person', 'human', 'developer', 'contributor'])
+    actor_word = lexicon.getWord(actor_word, nlg.LexicalCategory.NOUN)
+    if len(actors) > 1:
+        actor_word.setPlural(True)
+    actor_word = realiser.realise(actor_word)
+
     intro.paragraphs.append(
         "While you may have been enticed to grab this book because of its title"
         f' "{novel.title}", this is actually the story of {len(actors)}'
-        f" people who came together to build {repo_name}.",
+        f" {actor_word} who came together to build {repo_name}.",
     )
 
     novel.print()

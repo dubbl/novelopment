@@ -11,6 +11,7 @@ requests = "^2.28.1"
 pycorpora = "^0.1.2"
 PyDriller = "^2.1"
 pydantic = "^1.10.2"
+simplenlg = "^0.2.0"
 
 [tool.poetry.dev-dependencies]
 

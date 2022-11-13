@@ -208,6 +208,14 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
+name = "simplenlg"
+version = "0.2.0"
+description = "Python Implementation of SimpleNLG"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "smmap"
 version = "5.0.0"
 description = "A pure Python implementation of a sliding window memory map manager"
@@ -275,7 +283,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7, <4"
-content-hash = "60198ea3f6c2acc41434e2e392ad0ca7bd355af2d66034c2bc5f494bf04e5eb5"
+content-hash = "dfcdd4df48da14553d8ebe0141a1124a9b5a7cfb4ff27d27387396ad4ce77a46"
 
 [metadata.files]
 black = [
@@ -400,6 +408,10 @@ pytz = [
 requests = [
     {file = "requests-2.28.1-py3-none-any.whl", hash = "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"},
     {file = "requests-2.28.1.tar.gz", hash = "sha256:7c5599b102feddaa661c826c56ab4fee28bfd17f5abca1ebbe3e7f19d7c97983"},
+]
+simplenlg = [
+    {file = "simplenlg-0.2.0-py3-none-any.whl", hash = "sha256:1d258cf6e76a20c0dc97a10775632d32cdd00ef3f7fe1ae8c96c657c4e505e88"},
+    {file = "simplenlg-0.2.0.tar.gz", hash = "sha256:bc3b6490a32f83e9ec8920f2631981accf4c06ce7d796427e292a31e8250c856"},
 ]
 smmap = [
     {file = "smmap-5.0.0-py3-none-any.whl", hash = "sha256:2aba19d6a040e78d8b09de5c57e96207b09ed71d8e55ce0959eeee6c8e190d94"},
