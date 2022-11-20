@@ -8,8 +8,10 @@ from pydriller.repository import Repository
 import simplenlg as nlg
 
 from content_determiner import determine_content
+from document_planner import plan_document
 from miner import extract_data
 from novel import Novel
+from realizer import realize
 
 log = logging.getLogger("novelopment")
 logging.basicConfig()
@@ -50,6 +52,8 @@ def main():
 
     # handle empty repos?
 
+    plan_document(novel, content, actors, events)
+
     intro = novel.new_chapter(title="Introduction")
 
     actor_word = random.choice(["person", "human", "developer", "contributor"])
@@ -59,10 +63,14 @@ def main():
     actor_word = realiser.realise(actor_word)
 
     intro.paragraphs.append(
-        "While you may have been enticed to grab this book because of its title"
-        f' "{novel.title}", this is actually the story of {len(actors)}'
-        f" {actor_word} who came together to build {repo_name}.",
+        [
+            "While you may have been enticed to grab this book because of its "
+            f'title "{novel.title}", this is actually the story of {len(actors)}'
+            f" {actor_word} who came together to build {repo_name}.",
+        ]
     )
+
+    realize(novel)
 
     novel.print()
 
