@@ -25,7 +25,6 @@ def beginnings_planner(novel: Novel, content: dict, actors: dict, events: List):
             time=content["important_dates"]["first_authored"],
             subject="book",
             predicate="start",
-            tense=nlg.Tense.PRESENT,
         ),
     )
     paragraph.extend(
