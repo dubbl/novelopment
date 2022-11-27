@@ -44,6 +44,9 @@ class Actor(BaseModel):
     def __str__(self) -> str:
         return f"{self.name} <{self.email}>"
 
+    def to_word(self) -> str:
+        return self.name
+
 
 class NovelCommit(BaseModel):
     hash: str
@@ -89,6 +92,9 @@ class NovelCommit(BaseModel):
         if novel_commit.is_fix:
             actors[author_email].authored_fix_commits += 1
         return novel_commit
+
+    def to_word(self) -> str:
+        return f'commit with the message "{self.msg}"'
 
 
 def extract_data(repo: Repository):

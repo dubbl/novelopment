@@ -1,10 +1,11 @@
 from datetime import date, datetime
+from enum import Enum
 from typing import Optional, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import simplenlg as nlg
 
-from miner import Actor
+from miner import Actor, NovelCommit
 
 
 class Chapter(BaseModel):
@@ -38,12 +39,25 @@ class Novel(BaseModel):
             chapter.print()
 
 
+class ConnectorType(Enum):
+    COMPLEMENTIZER = nlg.Feature.COMPLEMENTISER
+    CUE_PHRASE = nlg.Feature.CUE_PHRASE
+    CONJUNCTION = nlg.Feature.CONJUNCTION
+
+
+class ConnectedPhrase(BaseModel):
+    phrases: list["Sentence"]
+    connector: str = "and"
+    connector_type: ConnectorType = ConnectorType.CONJUNCTION
+
+
 class Sentence(BaseModel):
     time: Optional[Union[datetime, date]]
-    subject: Union[Actor, str]
+    subject: Union[Actor, NovelCommit, str]
     predicate: str
-    complement: Optional[Union[Actor, str]]
+    complement: Optional[Union[Actor, NovelCommit, str]]
     tense: Optional[nlg.Tense]
+    connected_phrase: Optional[ConnectedPhrase]
 
     def get_tense(self):
         if self.tense:
@@ -53,3 +67,6 @@ class Sentence(BaseModel):
         if self.time and self.time < date.today():
             return nlg.Tense.PAST
         return nlg.Tense.PRESENT
+
+
+ConnectedPhrase.update_forward_refs()

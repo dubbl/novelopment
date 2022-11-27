@@ -7,6 +7,7 @@ import pycorpora
 from pydriller.repository import Repository
 import simplenlg as nlg
 
+from aggregator import aggregate
 from content_determiner import determine_content
 from document_planner import plan_document
 from miner import extract_data
@@ -53,6 +54,8 @@ def main():
     # handle empty repos?
 
     plan_document(novel, content, actors, events)
+
+    aggregate(novel)
 
     intro = novel.new_chapter(title="Introduction")
 
