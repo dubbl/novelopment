@@ -11,7 +11,12 @@ def aggregate(novel: Novel):
         for sentences in chapter.content:
             aggregated_sentences = []
             for _, group in groupby(
-                sentences, key=lambda s: str(s.subject) + str(s.time)
+                sentences,
+                key=lambda s: str(s.subject)
+                + str(s.predicate)
+                + str(s.time)
+                + str(s.tense)
+                + str(s.connected_phrase),
             ):
                 grouped_sentences = list(group)
                 if len(grouped_sentences) == 1:

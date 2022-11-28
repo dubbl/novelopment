@@ -21,7 +21,7 @@ def beginnings_planner(novel: Novel, content: dict, actors: dict, events: List):
 
     paragraph = []
     author_authors_first_commit = Sentence(
-        time=content["important_dates"]["first_authored"],
+        tense=nlg.Tense.PAST,
         subject=content["important_actors"]["first_author"],
         predicate="author",
         complement="the first commit",

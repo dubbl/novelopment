@@ -1,14 +1,14 @@
 from collections import Counter
+from datetime import date, datetime
 import logging
 import random
-from typing import Optional
 
 from pydantic import BaseModel
 import simplenlg as nlg
 
 from lexicon import synonyms
 from miner import Actor
-from novel import Novel, Sentence
+from novel import ConnectorType, Novel, Sentence
 
 log = logging.getLogger("novelopment.realizer")
 
@@ -56,18 +56,28 @@ def realize_sentence(sentence: Sentence):
         p.setComplement(complement_word)
     if sentence.time:
         pp = nlg_factory.createPrepositionPhrase()
-        pp.setPreposition("in")
-        pp.addComplement(sentence.time.isoformat())
+        pp.setPreposition("on")
+        pp.addComplement(get_word(sentence.time))
         p.addPostModifier(pp)
-    if sentence.connected_phrase:
-        # TODO: handle connection types other than conjunctions
+    if not sentence.connected_phrase:
+        return p
+    connected_phrase = sentence.connected_phrase
+    if connected_phrase.connector_type == ConnectorType.CONJUNCTION:
         cpe = nlg.framework.CoordinatedPhraseElement()
         cpe.addCoordinate(p)
-        for phrase in sentence.connected_phrase.phrases:
+        for phrase in connected_phrase.phrases:
             phrase = realize_sentence(phrase)
             cpe.addCoordinate(phrase)
         return cpe
-    return p
+    if connected_phrase.connector_type == ConnectorType.COMPLEMENTIZER:
+        for phrase in connected_phrase.phrases:
+            phrase = realize_sentence(phrase)
+            phrase.setFeature(
+                nlg.Feature.COMPLEMENTISER,
+                connected_phrase.connector,
+            )
+            p.addComplement(phrase)
+            return p
 
 
 def get_word(value):
@@ -77,4 +87,10 @@ def get_word(value):
         return value
     elif isinstance(value, BaseModel):
         return value.to_word()
+    elif isinstance(value, date):
+        return value.strftime(f"%A, %B {ordinal(value.day)} %Y")
     return str(value)
+
+
+def ordinal(n):
+    return f'{n}{"tsnrhtdd"[(n//10%10!=1)*(n%10<4)*n%10::4]}'
