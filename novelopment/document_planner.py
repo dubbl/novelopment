@@ -24,7 +24,7 @@ def beginnings_planner(novel: Novel, content: dict, actors: dict, events: List):
         tense=nlg.Tense.PAST,
         subject=content["important_actors"]["first_author"],
         predicate="author",
-        complement="the first commit",
+        complements=["the first commit"],
     )
     connected_phrase = ConnectedPhrase(
         connector_type=ConnectorType.COMPLEMENTIZER,
@@ -53,7 +53,7 @@ def mid_part_planner(novel: Novel, content: dict, actors: dict, events: List):
                     time=event.authored_date,
                     subject=event.author,
                     predicate="author",
-                    complement=event,
+                    complements=[event],
                 ),
             ]
         )

@@ -31,34 +31,35 @@ def realize(novel: Novel):
 
 
 def realize_sentence(sentence: Sentence):
+    p = nlg_factory.createClause()
+    p.setTense(sentence.get_tense())
+
     subject_word = get_word(sentence.subject)
     subject_word = nlg_factory.createNounPhrase(subject_word)
     if isinstance(sentence.subject, str):
         subject_word.setDeterminer("the")
     else:
         subject_word.setFeature(nlg.Feature.PERSON, nlg.Person.SECOND)
+    p.setSubject(subject_word)
 
     predicate = lexicon.getWord(sentence.predicate, nlg.LexicalCategory.VERB)
-
-    complement_word = None
-    if sentence.complement:
-        complement_word = get_word(sentence.complement)
-        complement_word = lexicon.getWord(
-            complement_word,
-            nlg.LexicalCategory.NOUN,
-        )
-
-    p = nlg_factory.createClause()
-    p.setTense(sentence.get_tense())
-    p.setSubject(subject_word)
     p.setVerb(predicate)
-    if complement_word:
-        p.setComplement(complement_word)
+
+    complement_cpe = nlg.framework.CoordinatedPhraseElement()
+    for complement in sentence.complements:
+        complement_word = get_word(complement)
+        complement_cpe.addCoordinate(
+            nlg_factory.createNounPhrase(complement_word),
+        )
+    p.setComplement(complement_cpe)
     if sentence.time:
         pp = nlg_factory.createPrepositionPhrase()
         pp.setPreposition("on")
         pp.addComplement(get_word(sentence.time))
-        p.addPostModifier(pp)
+        if random.getrandbits(1):
+            p.addPostModifier(pp)
+        else:
+            p.addFrontModifier(pp)
     if not sentence.connected_phrase:
         return p
     connected_phrase = sentence.connected_phrase

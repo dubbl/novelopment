@@ -1,8 +1,8 @@
 from datetime import date, datetime
 from enum import Enum
-from typing import Optional, Union
+from typing import List, Optional, Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 import simplenlg as nlg
 
 from miner import Actor, NovelCommit
@@ -55,7 +55,7 @@ class Sentence(BaseModel):
     time: Optional[Union[datetime, date]]
     subject: Union[Actor, NovelCommit, str]
     predicate: str
-    complement: Optional[Union[Actor, NovelCommit, str]]
+    complements: List[Union[Actor, NovelCommit, str]] = []
     tense: Optional[nlg.Tense]
     connected_phrase: Optional[ConnectedPhrase]
 
