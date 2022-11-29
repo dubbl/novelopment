@@ -79,7 +79,7 @@ class NovelCommit(BaseModel):
             hash=commit.hash,
             author=actors[author_email],
             committer=actors[committer_email],
-            msg=commit.msg,
+            msg=commit.msg.split("\n")[0],
             authored_date=commit.author_date.date(),
             authored_datetime=commit.author_date,
             committed_date=commit.committer_date.date(),

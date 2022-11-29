@@ -20,23 +20,11 @@ def beginnings_planner(novel: Novel, content: dict, actors: dict, events: List):
     chapter = novel.new_chapter(title="Humble beginnings")
 
     paragraph = []
-    author_authors_first_commit = Sentence(
-        tense=nlg.Tense.PAST,
-        subject=content["important_actors"]["first_author"],
-        predicate="author",
-        complements=["the first commit"],
-    )
-    connected_phrase = ConnectedPhrase(
-        connector_type=ConnectorType.COMPLEMENTIZER,
-        connector="when",
-        phrases=[author_authors_first_commit],
-    )
     paragraph.append(
         Sentence(
             time=content["important_dates"]["first_authored"],
             subject="book",
             predicate="start",
-            connected_phrases=[connected_phrase],
         ),
     )
     for event in events[: len(events) // 5]:
