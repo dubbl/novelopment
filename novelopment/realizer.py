@@ -17,9 +17,6 @@ nlg_factory = nlg.NLGFactory(lexicon)
 realiser = nlg.realiser.Realiser(lexicon)
 
 
-subject_counter = Counter()
-
-
 def realize(novel: Novel):
     for chapter in novel.chapters:
         for paragraph_content in chapter.content:

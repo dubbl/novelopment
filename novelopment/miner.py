@@ -104,5 +104,7 @@ def extract_data(repo: Repository):
         log.debug("Analyzing commit %s", commit.hash)
         if i % 50 == 0:
             log.info("Analyzed %d commits", i)
+        if commit.merge:
+            continue
         events.append(NovelCommit.from_commit(commit, actors))
     return actors, events
