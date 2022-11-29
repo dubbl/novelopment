@@ -46,18 +46,18 @@ class ConnectorType(Enum):
 
 
 class ConnectedPhrase(BaseModel):
-    phrases: list["Sentence"]
+    phrases: list["Sentence"] = []
     connector: str = "and"
     connector_type: ConnectorType = ConnectorType.CONJUNCTION
 
 
 class Sentence(BaseModel):
     time: Optional[Union[datetime, date]]
-    subject: Union[Actor, NovelCommit, str]
+    subject: Optional[Union[Actor, NovelCommit, str]]
     predicate: str
     complements: List[Union[Actor, NovelCommit, str]] = []
     tense: Optional[nlg.Tense]
-    connected_phrase: Optional[ConnectedPhrase]
+    connected_phrases: List[ConnectedPhrase] = []
 
     def get_tense(self):
         if self.tense:

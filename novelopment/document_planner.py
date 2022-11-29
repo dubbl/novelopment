@@ -36,9 +36,20 @@ def beginnings_planner(novel: Novel, content: dict, actors: dict, events: List):
             time=content["important_dates"]["first_authored"],
             subject="book",
             predicate="start",
-            connected_phrase=connected_phrase,
+            connected_phrases=[connected_phrase],
         ),
     )
+    for event in events[: len(events) // 5]:
+        paragraph.extend(
+            [
+                Sentence(
+                    time=event.authored_date,
+                    subject=event.author,
+                    predicate="author",
+                    complements=[event],
+                ),
+            ]
+        )
     chapter.content.append(paragraph)
 
 
@@ -46,7 +57,7 @@ def mid_part_planner(novel: Novel, content: dict, actors: dict, events: List):
     chapter = novel.new_chapter(title="Working on it")
 
     paragraph = []
-    for event in events:
+    for event in events[len(events) // 5 :]:
         paragraph.extend(
             [
                 Sentence(

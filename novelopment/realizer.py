@@ -34,15 +34,17 @@ def realize_sentence(sentence: Sentence):
     p = nlg_factory.createClause()
     p.setTense(sentence.get_tense())
 
-    subject_word = get_word(sentence.subject)
-    subject_word = nlg_factory.createNounPhrase(subject_word)
-    if isinstance(sentence.subject, str):
-        subject_word.setDeterminer("the")
-    else:
-        subject_word.setFeature(nlg.Feature.PERSON, nlg.Person.SECOND)
-    p.setSubject(subject_word)
+    if sentence.subject:
+        subject_word = get_word(sentence.subject)
+        subject_word = nlg_factory.createNounPhrase(subject_word)
+        if isinstance(sentence.subject, str):
+            subject_word.setDeterminer("the")
+        else:
+            subject_word.setFeature(nlg.Feature.PERSON, nlg.Person.SECOND)
+        p.setSubject(subject_word)
 
-    predicate = lexicon.getWord(sentence.predicate, nlg.LexicalCategory.VERB)
+    predicate = get_word(sentence.predicate)
+    predicate = lexicon.getWord(predicate, nlg.LexicalCategory.VERB)
     p.setVerb(predicate)
 
     complement_cpe = nlg.framework.CoordinatedPhraseElement()
@@ -60,25 +62,30 @@ def realize_sentence(sentence: Sentence):
             p.addPostModifier(pp)
         else:
             p.addFrontModifier(pp)
-    if not sentence.connected_phrase:
+    if not sentence.connected_phrases:
         return p
-    connected_phrase = sentence.connected_phrase
-    if connected_phrase.connector_type == ConnectorType.CONJUNCTION:
-        cpe = nlg.framework.CoordinatedPhraseElement()
-        cpe.addCoordinate(p)
-        for phrase in connected_phrase.phrases:
-            phrase = realize_sentence(phrase)
-            cpe.addCoordinate(phrase)
-        return cpe
-    if connected_phrase.connector_type == ConnectorType.COMPLEMENTIZER:
-        for phrase in connected_phrase.phrases:
-            phrase = realize_sentence(phrase)
-            phrase.setFeature(
-                nlg.Feature.COMPLEMENTISER,
-                connected_phrase.connector,
+    for connected_phrase in sentence.connected_phrases:
+        if connected_phrase.connector_type == ConnectorType.CONJUNCTION:
+            cpe = nlg.framework.CoordinatedPhraseElement()
+            cpe.addCoordinate(p)
+            for phrase in connected_phrase.phrases:
+                phrase = realize_sentence(phrase)
+                cpe.addCoordinate(phrase)
+            p = cpe
+        if connected_phrase.connector_type == ConnectorType.COMPLEMENTIZER:
+            for phrase in connected_phrase.phrases:
+                phrase = realize_sentence(phrase)
+                phrase.setFeature(
+                    nlg.Feature.COMPLEMENTISER,
+                    get_word(connected_phrase.connector),
+                )
+                p.addComplement(phrase)
+        if connected_phrase.connector_type == ConnectorType.CUE_PHRASE:
+            p.setFeature(
+                nlg.Feature.CUE_PHRASE,
+                get_word(connected_phrase.connector),
             )
-            p.addComplement(phrase)
-            return p
+    return p
 
 
 def get_word(value):

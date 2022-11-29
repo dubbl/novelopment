@@ -51,12 +51,6 @@ def main():
         for k, v in content[key].items():
             print(f"\t{k}: {v}")
 
-    # handle empty repos?
-
-    plan_document(novel, content, actors, events)
-
-    aggregate(novel)
-
     intro = novel.new_chapter(title="Introduction")
 
     actor_word = random.choice(["person", "human", "developer", "contributor"])
@@ -72,7 +66,9 @@ def main():
             f" {actor_word} who came together to build {repo_name}.",
         ]
     )
-
+    # handle empty repos?
+    plan_document(novel, content, actors, events)
+    aggregate(novel)
     realize(novel)
 
     novel.print()
