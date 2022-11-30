@@ -46,6 +46,7 @@ def realize_sentence(sentence: Sentence):
             nlg_factory.createNounPhrase(complement_word),
         )
     p.setComplement(complement_cpe)
+
     if sentence.time:
         pp = nlg_factory.createPrepositionPhrase()
         pp.setPreposition("on")
@@ -54,6 +55,8 @@ def realize_sentence(sentence: Sentence):
             p.addPostModifier(pp)
         else:
             p.addFrontModifier(pp)
+    if sentence.time_expression:
+        p.setFeature(nlg.Feature.CUE_PHRASE, sentence.time_expression)
     if not sentence.connected_phrases:
         return p
     for connected_phrase in sentence.connected_phrases:
@@ -75,6 +78,6 @@ def realize_sentence(sentence: Sentence):
         if connected_phrase.connector_type == ConnectorType.CUE_PHRASE:
             p.setFeature(
                 nlg.Feature.CUE_PHRASE,
-                get_word(connected_phrase.connector),
+                get_word(connected_phrase.connector) + ",",
             )
     return p

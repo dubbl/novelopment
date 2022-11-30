@@ -1,8 +1,6 @@
 import logging
 from typing import List
 
-import simplenlg as nlg
-
 from novel import Novel, ConnectedPhrase, ConnectorType, Sentence
 
 log = logging.getLogger("novelopment.document_planner")

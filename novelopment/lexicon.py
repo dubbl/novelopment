@@ -21,7 +21,13 @@ def get_word(value):
     elif isinstance(value, BaseModel):
         return value.to_word()
     elif isinstance(value, date):
-        return value.strftime(f"%A, %B {ordinal(value.day)} %Y")
+        return random.choice(
+            [
+                value.strftime(f"%A, %B {ordinal(value.day)} %Y"),
+                value.strftime(f"%B {ordinal(value.day)} %Y"),
+                value.strftime(f"%B the {ordinal(value.day)} %Y"),
+            ],
+        )
     return str(value)
 
 

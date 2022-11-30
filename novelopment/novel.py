@@ -53,6 +53,7 @@ class ConnectedPhrase(BaseModel):
 
 class Sentence(BaseModel):
     time: Optional[Union[datetime, date]]
+    time_expression: Optional[str]
     subject: Optional[Union[Actor, NovelCommit, str]]
     subject_determiner: Optional[str]
     predicate: str

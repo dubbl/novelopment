@@ -1,4 +1,5 @@
 from collections import Counter
+from datetime import timedelta
 from itertools import tee
 import random
 
@@ -12,6 +13,7 @@ def generate_expressions(novel: Novel):
     for chapter in novel.chapters:
         generate_referring_expressions(chapter.content)
         generate_describing_entity_expressions(chapter.content, global_appearance)
+        generate_time_expressions(chapter.content)
 
 
 def generate_referring_expressions(content):
@@ -24,6 +26,51 @@ def generate_referring_expressions(content):
                     s2.subject = "they"
                 if isinstance(s1.subject, NovelCommit):
                     s2.subject = "it"
+
+
+time_checks = [
+    ("year", {"days": 365}, 0, 10),
+    ("week", {"days": 7}, 0, 51),
+    ("day", {"days": 1}, 0, 6),
+]
+
+
+def generate_time_expressions(content):
+    for paragraph in content:
+        for s1, s2 in pairwise(paragraph):
+            if not s1.time or not s2.time:
+                continue
+            if isinstance(s1.time, str) or isinstance(s2.time, str):
+                continue
+            delta = s2.time - s1.time
+            for name, delta_params, min_range, max_range in time_checks:
+                if name == "day" and random.getrandbits(1):
+                    # days don't always have to be counted
+                    continue
+                for factor in range(max_range, min_range, -1):
+                    if delta == timedelta(**delta_params) * factor:
+                        name = name if factor == 1 else f"{name}s"
+                        prefix = random.choice(
+                            [
+                                "exactly",
+                                "around",
+                                "roughly",
+                                "about",
+                                "roundabout",
+                            ],
+                        )
+                        postfix = random.choice(
+                            ["later", "down the line", "down the road"],
+                        )
+                        s2.time_expression = f"{prefix} {factor} {name} {postfix}"
+                        break
+                    if delta > timedelta(**delta_params) * factor and name != "day":
+                        name = name if factor == 1 else f"{name}s"
+                        postfix = random.choice(
+                            ["later", "down the line", "down the road"],
+                        )
+                        s2.time_expression = f"More than {factor} {name} {postfix}"
+                        break
 
 
 def pairwise(iterable):
