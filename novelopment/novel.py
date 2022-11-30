@@ -46,7 +46,7 @@ class Chapter(BaseModel):
 
 class Novel(BaseModel):
     title: str = ""
-    author: str = "Novelopment 0.1"
+    author: str = "Novelopment 1.0"
     synopsis: str = ""
     chapters: list[Chapter] = []
 

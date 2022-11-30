@@ -47,10 +47,6 @@ def main():
     actors, events = extract_data(repo)
 
     content = determine_content(actors, events)
-    for key in content:
-        print(f"{key}:")
-        for k, v in content[key].items():
-            print(f"\t{k}: {v}")
 
     intro = novel.new_chapter(title="Introduction")
 

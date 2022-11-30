@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "novelopment"
-version = "0.1.0"
+version = "1.0.0"
 description = "Generating novels based on git repositories"
 authors = ["dubbl <dubbel14@googlemail.com>"]
 license = "Apache License 2.0"
