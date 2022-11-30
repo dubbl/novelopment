@@ -35,6 +35,7 @@ def beginnings_planner(novel: Novel, content: dict, actors: dict, events: List):
     paragraph.append(
         Sentence(
             time=content["important_dates"]["first_authored"],
+            subject_determiner="the",
             subject="book",
             predicate="start",
         ),

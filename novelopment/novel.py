@@ -54,6 +54,7 @@ class ConnectedPhrase(BaseModel):
 class Sentence(BaseModel):
     time: Optional[Union[datetime, date]]
     subject: Optional[Union[Actor, NovelCommit, str]]
+    subject_determiner: Optional[str]
     predicate: str
     complements: List[Union[Actor, NovelCommit, str]] = []
     tense: Optional[nlg.Tense]

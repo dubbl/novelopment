@@ -34,10 +34,8 @@ def realize_sentence(sentence: Sentence):
     if sentence.subject:
         subject_word = get_word(sentence.subject)
         subject_word = nlg_factory.createNounPhrase(subject_word)
-        if isinstance(sentence.subject, str):
-            subject_word.setDeterminer("the")
-        else:
-            subject_word.setFeature(nlg.Feature.PERSON, nlg.Person.SECOND)
+        if sentence.subject_determiner:
+            subject_word.setDeterminer(sentence.subject_determiner)
         p.setSubject(subject_word)
 
     predicate = get_word(sentence.predicate)

@@ -10,6 +10,7 @@ import simplenlg as nlg
 from aggregator import aggregate
 from content_determiner import determine_content
 from document_planner import plan_document
+from expressions_generator import generate_expressions
 from miner import extract_data
 from novel import Novel
 from realizer import realize
@@ -55,20 +56,23 @@ def main():
 
     actor_word = random.choice(["person", "human", "developer", "contributor"])
     actor_word = lexicon.getWord(actor_word, nlg.LexicalCategory.NOUN)
+    predicate = "building"
     if len(actors) > 1:
         actor_word.setPlural(True)
+        predicate = "coming together to build"
     actor_word = realiser.realise(actor_word)
 
     intro.paragraphs.append(
         [
             "While you may have been enticed to grab this book because of its "
             f'title "{novel.title}", this is actually the story of {len(actors)}'
-            f" {actor_word} who came together to build {repo_name}.",
+            f" {actor_word} {predicate} {repo_name} in {len(events)} commits.",
         ]
     )
     # handle empty repos?
     plan_document(novel, content, actors, events)
     aggregate(novel)
+    generate_expressions(novel)
     realize(novel)
 
     novel.print()
