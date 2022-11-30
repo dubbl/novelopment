@@ -144,6 +144,18 @@ def the_end_planner(novel: Novel, content: dict, actors: dict, events: List):
                     subject=event.author,
                     predicate="author",
                     complements=[event],
+                    connected_phrases=[
+                        ConnectedPhrase(
+                            phrases=[
+                                Sentence(
+                                    subject="book",
+                                    subject_determiner="the",
+                                    predicate="conclude",
+                                    time_expression="for now",
+                                )
+                            ],
+                        ),
+                    ],
                 ),
             ]
         )
