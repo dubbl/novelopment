@@ -12,6 +12,7 @@ pycorpora = "^0.1.2"
 PyDriller = "^2.1"
 pydantic = "^1.10.2"
 simplenlg = "^0.2.0"
+jinja2 = "^3.1.2"
 
 [tool.poetry.dev-dependencies]
 
