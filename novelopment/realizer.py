@@ -1,12 +1,9 @@
-from collections import Counter
-from datetime import date, datetime
 import logging
 import random
 
-from pydantic import BaseModel
 import simplenlg as nlg
 
-from lexicon import synonyms
+from lexicon import get_word
 from miner import Actor
 from novel import ConnectorType, Novel, Sentence
 
@@ -81,19 +78,3 @@ def realize_sentence(sentence: Sentence):
                 get_word(connected_phrase.connector),
             )
     return p
-
-
-def get_word(value):
-    if isinstance(value, str):
-        if value in synonyms:
-            return random.choice(synonyms[value])
-        return value
-    elif isinstance(value, BaseModel):
-        return value.to_word()
-    elif isinstance(value, date):
-        return value.strftime(f"%A, %B {ordinal(value.day)} %Y")
-    return str(value)
-
-
-def ordinal(n):
-    return f'{n}{"tsnrhtdd"[(n//10%10!=1)*(n%10<4)*n%10::4]}'
