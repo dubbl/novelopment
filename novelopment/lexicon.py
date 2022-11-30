@@ -9,7 +9,7 @@ synonyms: dict[str, list[str]] = {
     "author": ["author", "write", "create", "add", "craft", "compose"],
     "while": ["while", "whilst", "when"],
     "meanwhile": ["meanwhile", "at the same time", "concurrently", "simultaneously"],
-    "they": ["they", "they themselves", "the very same"],
+    "they": ["they", "they themselves", "the very same one"],
 }
 
 

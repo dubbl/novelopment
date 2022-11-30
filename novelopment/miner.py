@@ -94,7 +94,7 @@ class NovelCommit(BaseModel):
         return novel_commit
 
     def to_word(self) -> str:
-        return f'a commit with the message "{self.msg}"'
+        return f"commit"
 
 
 def extract_data(repo: Repository):
