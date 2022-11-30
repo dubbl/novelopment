@@ -80,6 +80,8 @@ def main():
     realize(novel)
 
     novel.print()
+    if args.epub:
+        novel.to_epub(args.epub)
 
 
 def get_repo_name(repository_location):
@@ -117,6 +119,12 @@ parser.add_argument(
         "Hexadecimal seed of the pseudorandom number generator. "
         "Defaults to the hash of the latest commit."
     ),
+    required=False,
+)
+parser.add_argument(
+    "-e",
+    "--epub",
+    help="Filepath that the epub export should be written to",
     required=False,
 )
 parser.add_argument("--verbose", "-v", action="count", default=0)

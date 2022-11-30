@@ -2,6 +2,7 @@ from datetime import date, datetime
 from enum import Enum
 from typing import List, Optional, Union
 
+from ebooklib import epub
 from jinja2 import Environment, BaseLoader
 from pydantic import BaseModel
 import simplenlg as nlg
@@ -64,6 +65,59 @@ class Novel(BaseModel):
     def to_html(self) -> str:
         template = jinja_env.from_string(title_template)
         return template.render(**self.dict())
+
+    def to_epub(self, output):
+        book = epub.EpubBook()
+
+        # set metadata
+        book.set_title(self.title)
+        book.set_language("en")
+
+        book.add_author(self.author)
+        book.add_author("Hauke Lübbers", role="ill", uid="coauthor")
+
+        title = epub.EpubHtml(
+            title=self.title,
+            file_name="cover.xhtml",
+            lang="en",
+        )
+        title.content = self.to_html()
+        book.add_item(title)
+        # create chapter
+        book_chapters = []
+        for i, chapter in enumerate(self.chapters):
+            c = epub.EpubHtml(
+                title=chapter.title,
+                file_name=f"chapter_{i}.xhtml",
+                lang="en",
+            )
+            c.content = chapter.to_html()
+            # add chapter
+            book.add_item(c)
+            book_chapters.append(c)
+
+        # define CSS style
+        style = "body {color: white;}"
+        nav_css = epub.EpubItem(
+            uid="style_nav",
+            file_name="style/nav.css",
+            media_type="text/css",
+            content=style,
+        )
+        book.add_item(nav_css)
+
+        # define Table Of Contents
+        book.toc = book_chapters
+
+        # add default NCX and Nav file
+        book.add_item(epub.EpubNcx())
+        book.add_item(epub.EpubNav())
+
+        # basic spine
+        book.spine = [title, "nav", *book_chapters]
+
+        # write to the file
+        epub.write_epub(output, book, {})
 
 
 class ConnectorType(Enum):
