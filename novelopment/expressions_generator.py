@@ -93,6 +93,7 @@ def describe_entities(sentence, global_appearance, chapter_appearance):
             chapter_appearance,
             global_appearance,
         )
+    # TODO: create descriptions for an entire series of similar complements
     new_complements = []
     for complement in sentence.complements:
         new_complements.append(
@@ -135,6 +136,13 @@ def get_expression_for(something, chapter_appearance, global_appearance):
                 ],
             )
     elif isinstance(something, NovelCommit):
+        if something.is_revert:
+            expression = random.choice(
+                [
+                    f"revert-{expression}",
+                    f"reverting {expression}",
+                ]
+            )
         if something.is_fix:
             expression = random.choice(
                 [

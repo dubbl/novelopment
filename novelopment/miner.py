@@ -59,10 +59,12 @@ class NovelCommit(BaseModel):
     committed_datetime: datetime
     size: CommitSize
     is_fix: bool
+    is_revert: bool
 
     @classmethod
     def from_commit(cls, commit: "Commit", actors: dict[str, Actor]):
         fix_pattern = r"\bfix\b"
+        revert_pattern = r"\brevert\b"
         committer_email = commit.committer.email
         author_email = commit.author.email
         if author_email not in actors:
@@ -86,6 +88,7 @@ class NovelCommit(BaseModel):
             committed_datetime=commit.committer_date,
             size=CommitSize.get_size_of_commit(commit),
             is_fix=bool(re.search(fix_pattern, commit.msg, re.IGNORECASE)),
+            is_revert=bool(re.search(revert_pattern, commit.msg, re.IGNORECASE)),
         )
         actors[author_email].authored_commits += 1
         actors[committer_email].committed_commits += 1
