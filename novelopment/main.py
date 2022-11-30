@@ -70,9 +70,13 @@ def main():
         ]
     )
     # handle empty repos?
+    log.info("Planning document structure")
     plan_document(novel, content, actors, events)
+    log.info("Aggregating sentences")
     aggregate(novel)
+    log.info("Finding beautiful expressions")
     generate_expressions(novel)
+    log.info("Surface realizing")
     realize(novel)
 
     novel.print()

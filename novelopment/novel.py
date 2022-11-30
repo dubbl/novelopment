@@ -2,10 +2,29 @@ from datetime import date, datetime
 from enum import Enum
 from typing import List, Optional, Union
 
+from jinja2 import Environment, BaseLoader
 from pydantic import BaseModel
 import simplenlg as nlg
 
 from miner import Actor, NovelCommit
+
+jinja_env = Environment(loader=BaseLoader)
+chapter_template = """
+<h2>{{ title }}</h2>
+{% for paragraph in paragraphs %}
+    <p>
+        {% for sentence in paragraph %}
+            {{ sentence }}
+        {% endfor %}
+    </p>
+{% endfor %}
+"""
+
+title_template = """
+<h1>{{ title }}</h1>
+
+<p>A robotic novel by {{ author }}<p>
+"""
 
 
 class Chapter(BaseModel):
@@ -18,6 +37,10 @@ class Chapter(BaseModel):
         print(self.title)
         for sentences in self.paragraphs:
             print(" ".join(sentences))
+
+    def to_html(self) -> str:
+        template = jinja_env.from_string(chapter_template)
+        return template.render(**self.dict())
 
 
 class Novel(BaseModel):
@@ -37,6 +60,10 @@ class Novel(BaseModel):
         print(self.synopsis)
         for chapter in self.chapters:
             chapter.print()
+
+    def to_html(self) -> str:
+        template = jinja_env.from_string(title_template)
+        return template.render(**self.dict())
 
 
 class ConnectorType(Enum):
