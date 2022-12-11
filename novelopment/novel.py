@@ -3,13 +3,16 @@ from enum import Enum
 from typing import List, Optional, Union
 
 from ebooklib import epub
-from jinja2 import Environment, BaseLoader
+from jinja2 import Environment, BaseLoader, select_autoescape
 from pydantic import BaseModel
 import simplenlg as nlg
 
 from miner import Actor, NovelCommit
 
-jinja_env = Environment(loader=BaseLoader)
+jinja_env = Environment(
+    loader=BaseLoader,
+    autoescape=select_autoescape(),
+)
 chapter_template = """
 <h2>{{ title }}</h2>
 {% for paragraph in paragraphs %}
